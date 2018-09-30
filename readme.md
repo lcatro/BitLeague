@@ -1,9 +1,9 @@
 
 ##  聚合交易平台:BitLeague (币联盟)
 
-[](logo2.png)
+![logo2.png](logo2.png)
 
-[](logo1.png)
+![logo2.png](logo1.png)
 
   离职创业搞的聚合交易平台**BitLeague**,虽然失败了,不乏作为自己的一次尝试.部分模块还没有完全实现,基本功能还是可以用用的.
   
@@ -21,7 +21,7 @@
 
 ## Demo UI
 
-[](design.jpg)
+![logo2.png](design.jpg)
 
 
 ## How to Using

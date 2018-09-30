@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>交易</title>
+		<link rel="stylesheet" type="text/css" href="css/reset.css"/>
+		<link rel="stylesheet" type="text/css" href="css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css"/>
+		<link rel="stylesheet" type="text/css" href="css/rangeslider.css"/>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header">
+				<div class="logo fl">
+					<img class="logo1" src="img/logo1.png"/>
+					<img class="logo2" src="img/logo2.png"/>
+				</div>
+				<div class="nav fl">
+					<a href="index.html">行情</a>
+					<a href="trade.html" class="on">交易</a>
+				</div>
+				<div class="layui-input-inline fl">
+					<input type="text" name="search" placeholder="想要了解的币？" class="layui-input">
+					<div class="search">
+						<img src="img/search.png"/>
+					</div>
+				</div>
+				<div class="user-center fr">
+					<a href="login.html">登录</a><span>|</span><a href="register.html">注册</a>
+				</div>
+			</div>
+			<div class="trade clearfix">
+				<div class="trade-title clearfix">
+					<div class="trade-name"></div>
+					<div class="trade-price"></div>
+					<div class="trade-volume"></div>
+					<div class="trade-deal"></div>
+				</div>
+				<div id="trade-K">
+					
+				</div>
+				<div class="trade-left">
+					<div class="buy-sell-btn buy-btn buy-btn-on">买入</div>
+					<div class="buy-sell-btn sell-btn">卖出</div>
+					<span class="xianjia-text">限价</span>
+					<div class="xianjia-box">
+						<input type="text" name="" id="" value="" >
+						<div class="reduce">-</div>
+						<div class="add">+</div>
+					</div>
+					<div class="xianjia-box2">
+						<input type="text" name="" id="" value="" >
+						<span class="name">NAME</span>
+					</div>
+					<span class="ky">可用 <b>1200</b> <em>USDT</em></span>
+					<div class="range">
+						<div>
+					        <br>
+					        <input type="range" min="0" max="100" step="1" value="0" data-rangeslider>
+					        <div style="color: #909090;"><span class="fl">0%</span><span class="fr">100%</span></div>
+					    </div>
+					</div>
+					<div class="trade-num">交易额<b>0</b> <em>USDT</em></div>
+					<div class="buy-big-btn">买入<span class="btn-pairName">NAME</span></div>
+					<div class="sell-big-btn">卖出<span class="btn-pairName">NAME</span></div>
+					
+					<div class="section-right">
+						<div style="height: 194px;overflow: hidden;">
+						<table border="0" class="up-table up-up-table" width="190">
+							<tr>
+								<th>盘口</th>
+								<th>价格</th>
+								<th>数量</th>
+							</tr>
+						</table>
+						</div>
+						<div class="current"></div>
+						<div style="height: 184px;overflow: hidden;">
+						<table border="0" class="up-table down-table" width="190">
+							
+						</table>
+						</div>
+						<div class="shendu-text">
+							<select name="">
+								<option value="">深度</option>
+								<option value="0.1">0.1</option>
+								<option value="0.01">0.01</option>
+							</select>
+						</div>
+					</div>
+					
+					<div class="section-left2">
+						<p>成交</p>
+						<div class="deal-data">
+							<span>时间</span>
+							<span>方向</span>
+							<span>价格(USDT)</span>
+							<span>数量(NAME)</span>
+							<div class="clearfix"></div>
+							<div class="tabel-scroll">
+								<table border="0" width="480" class="deal-table">
+									
+								</table>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+				<div class="trade-right">
+					<p>深度</p>
+					<div class="deep-pic">
+						<div class="deep-img" id="deep"></div>
+					</div>
+					<div class="trade-data">
+						<span>买盘</span>
+						<span>数量(NAME)</span>
+						<span>价格(USDT)</span>
+						<span style="padding-right: 17px;">数量(NAME)</span>
+						<span>卖盘</span>
+						<div style="height:580px;overflow: hidden;">
+						<table border="0" width="190" class="data-table data-table1">
+							
+						</table>
+						<table border="0" width="190" class="data-table data-table2">
+							
+						</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="footer">全球首个区块链交易所平台</div>
+		</div>
+		
+		<script src="js/jquery-2.2.2.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/rangeslider.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/echarts.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(function(){
+				$(".sell-btn").click(function(){
+					$(this).addClass("sell-btn-on").siblings().removeClass("buy-btn-on");
+					$(".buy-big-btn").hide();
+					$(".sell-big-btn").show();
+				});
+				$(".buy-btn").click(function(){
+					$(this).addClass("buy-btn-on").siblings().removeClass("sell-btn-on");
+					$(".buy-big-btn").show();
+					$(".sell-big-btn").hide();
+				})
+			})
+		</script>
+		
+		<!--交易数据-->
+		<script type="text/javascript">
+			//截取url参数
+			function getParams(key){
+			    var url = location.search.replace(/^\?/,'').split('&');
+			    var paramsObj = {};
+			    for(var i = 0, iLen = url.length; i < iLen; i++){
+			        var param = url[i].split('=');
+			        paramsObj[param[0]] = param[1];
+			    }
+			    if(key){
+			        return paramsObj[key] || '';
+			    }
+			    return paramsObj;
+			}
+			var pair = getParams().pair;
+			if (pair == undefined) {
+				pair = "ETH/BTC";
+			};
+			
+			//对pair的切割
+			var coinName = pair.split("/")[0];
+			var pairName = pair.split("/")[1];
+			$(".name").text(coinName);
+			$(".btn-pairName").text(coinName);
+			$(".trade-num em").text(pairName);
+			$(".ky em").text(pairName);
+			
+			var dataPrice = 0;
+			var increaseDiv = "";
+			
+			//获取coin数据
+			$.ajax({
+				type:"GET",
+				url:"http://121.42.179.107:8088/router?router=get_coin&pair="+pair,
+				async:true,
+				dataType:'json',
+				success:function(data){
+					dataPrice = data.data.price;
+					var increaseNum = (data.data.increase*100).toFixed(1);
+					if(increaseNum >= 0){
+						increaseDiv = "↑ + "+increaseNum+"%";
+					}else{
+						increaseDiv = "↓ "+increaseNum+"%";
+						$(".trade-volume").css({'color':'#ec6941'});
+					}
+					$(".trade-name").text(data.data.pair);
+					$(".trade-price").text("$ " + (data.data.price*1).toFixed(12));
+					$(".trade-volume").text(increaseDiv);
+					$(".trade-deal").text("24H成交量 " + (data.data.amount*1).toFixed(12));
+					$(".current").text((dataPrice*1).toFixed(10));
+				}
+			});
+			
+			var deal = "" ;
+			
+			//获取成交数据
+			$.ajax({
+				type:"GET",
+				url:"http://121.42.179.107:8088/router?router=get_deal_record&pair="+pair,
+				async:true,
+				dataType:'json',
+				success:function(data){
+					$.each(data.data, function(index,content) {
+						deal += `<tr>
+							<td>${getMyDate(content[2])}</td>
+							<td>买入</td>
+							<td>${content[0]}</td>
+							<td>${content[1]}</td>
+						</tr>`
+					});
+					$(".deal-table").append(deal);
+				}
+			});
+			
+			//获取深度数据
+				var data1 = "" ;
+				var data2 = "" ;
+				var simpleData1 = "" ;
+				var simpleData2 = "" ;
+				$.ajax({
+					type:"GET",
+					url:"http://121.42.179.107:8088/router?router=get_depth&pair="+pair,
+					async:true,
+					dataType:'json',
+					success:function(data){
+						var pairPrice = [];
+						var bidPrice = [];
+						var askPrice = [];
+						$.each(data.data.bid, function(index,content) {
+							pairPrice.push(content[0]);
+							bidPrice.push(content[1]);
+							data1 += `<tr>
+									<td>${index+1}</td>
+									<td>${content[1].toFixed(3)}</td>
+									<td>${content[0].toPrecision(9)}</td>
+									</tr>`;
+							
+							simpleData1 += `<tr>
+									<td>${index+1}</td>
+									<td>${content[0].toPrecision(9)}</td>
+									<td>${content[1].toFixed(3)}</td>
+									</tr>`;
+							
+						});
+						$(".data-table1").append(data1);
+						$(".down-table").append(simpleData1);
+						
+						$.each(data.data.ask, function(index,content) {
+							pairPrice.push(content[0]);
+							askPrice.push(content[1]);
+							data2 += `<tr>
+									<td>${content[0].toPrecision(9)}</td>
+									<td>${content[1].toFixed(3)}</td>
+									<td>${index+1}</td>
+									</tr>`;
+									
+							simpleData2 += `<tr>
+									<td>${index+1}</td>
+									<td>${content[0].toPrecision(9)}</td>
+									<td>${content[1].toFixed(3)}</td>
+									</tr>`;
+						});
+						$(".data-table2").append(data2);
+						$(".up-up-table").append(simpleData2);
+						
+						arrSortMinToMax(pairPrice);
+						arrSortMinToMax(askPrice);
+						arrSortMaxToMin(bidPrice);
+						askPrice.unshift('','','','','','','','','','','','','','','','','','','','');
+						
+						function arrSortMaxToMin(arr){
+				            var max;
+				            for(var i=0; i<arr.length; i++){
+				                for(var j=i; j<arr.length; j++){
+				                    if(arr[i]<arr[j]){
+				　　　　　　　　　　　　	max=arr[j];
+				                        arr[j]=arr[i];
+				                        arr[i]=max;
+				                    }
+				                }
+				            }
+						}
+						
+						function arrSortMinToMax(arr){
+							var min;
+							for(var i=0; i<arr.length; i++){
+							    for(var j=i; j<arr.length;j++){
+							        if(arr[i]>arr[j]){
+							          min=arr[j];
+							          arr[j]=arr[i];
+							          arr[i]=min;
+							        }
+							    }
+							}
+						}
+						
+						
+						$(".data-table1 tr").each(function(){
+							var sub = $(this).find("td").eq(1).text().substring(0, 8);
+							$(this).find("td").eq(1).text(sub);
+						})
+						$(".data-table2 tr").each(function(){
+							var sub = $(this).find("td").eq(1).text().substring(0, 8);
+							$(this).find("td").eq(1).text(sub);
+						})
+						
+						myChart1.setOption({   
+							xAxis: {
+			        			type: 'category',
+								data: pairPrice
+							},
+							yAxis: [
+								{
+						        	type: 'value',
+						        	splitLine:{
+							　　　　		show:false
+									}
+						   		},
+								{
+						        	type: 'value',
+						        	splitLine:{
+							　　　　		show:false
+									}
+						   		}
+							],
+			                series:[
+			                    {    
+			                    	name:"委托价",
+			                        data:bidPrice,
+			                        type: 'line',
+			        				areaStyle: {color:'#009944'},
+			                        lineStyle: {color:'#009944'},
+			                        itemStyle: {color:'#009944'},
+			                    },
+			                    {    
+			                    	name:"委托价",
+			                        data:askPrice,
+			                        type: 'line',
+			                        areaStyle: {color:'#ec6941'},
+			      					lineStyle: {color:'#ec6941'},
+			      					itemStyle: {color:'#ec6941'},
+			                        
+			                    },
+			                ]
+			            })
+						
+					}
+				});
+			
+			var deep = document.getElementById("deep");
+			var myChart1 = echarts.init(deep);
+			option1 = {
+				tooltip: {
+			        trigger: 'axis',
+			        axisPointer: {
+			            type: 'cross'
+			        }
+			    },
+			    formatter: '{a}: {b}<br /><span>数量: <span>{c}',
+			};
+			
+			if (option1 && typeof option1 === "object") {
+			    myChart1.setOption(option1, true);
+			}
+			
+			myChart1.on('click', function (handler,context){  
+				var handlerNum = handler.name;
+				$(".xianjia-box input").val(handlerNum);
+				total();
+	        });  
+			
+//			时间戳转日期（时分秒）
+			function getMyDate(str){
+	            var oDate = new Date(str),
+	            oYear = oDate.getFullYear(),
+	            oMonth = oDate.getMonth()+1,
+	            oDay = oDate.getDate(),
+	            oHour = oDate.getHours(),
+	            oMin = oDate.getMinutes(),
+	            oSen = oDate.getSeconds(),
+	            oTime = getzf(oHour) +':'+getzf(oMin) +':'+getzf(oSen);
+	            return oTime;
+	        };
+	        
+//			时间戳转日期（年月日时分秒）
+			function getMyDate2(str){
+	            var oDate = new Date(parseInt(str) * 1000),
+	            oYear = oDate.getFullYear(),
+	            oMonth = oDate.getMonth()+1,
+	            oDay = oDate.getDate(),
+	            oHour = oDate.getHours(),
+	            oMin = oDate.getMinutes(),
+	            oSen = oDate.getSeconds(),
+	            oTime = oYear +'-'+ getzf(oMonth) +'-'+ getzf(oDay) +' '+ getzf(oHour) +':'+
+						getzf(oMin) +':'+getzf(oSen);
+	            return oTime;
+	        };
+	        
+	        //补0
+	      	function getzf(num){
+	          if(parseInt(num) < 10){
+	              num = '0'+num;
+	       		}
+	          	return num;
+	        }
+
+		</script>
+		
+		<!--买入卖出-->
+		<script type="text/javascript">
+		    $(".xianjia-box input,.xianjia-box2 input").on("keypress", function(event) {
+			    var event= event || window.event;
+			    var getValue = $(this).val();
+			    if (getValue.length == 0 && event.which == 46) {
+			        event.preventDefault();
+			        return;
+			    }
+			    if (getValue.indexOf('.') != -1 && event.which == 46) {
+			        event.preventDefault();
+			        return;
+			    }
+			    if (event.which && (event.which < 48 || event.which > 57) && event.which != 8 && event.which != 46) {
+			        event.preventDefault();
+			         return;
+			    }
+		    })
+    
+			
+			var danjia = 0;
+			var shuliang = 0;
+			function total(){
+				danjia = $(".xianjia-box input").val();
+				shuliang = $(".xianjia-box2 input").val();
+				var sum = (danjia*shuliang*10)/10;
+				$(".trade-num b").text(sum);
+			}
+				
+
+			$(".xianjia-box input,.xianjia-box2 input").on("keyup",function(){
+				total();
+			});
+			$(".xianjia-box .reduce").click(function(){
+				danjia = $(".xianjia-box input").val();
+				if(danjia > 1){
+					danjia = (danjia*10 - 1*10) / 10;
+				}else{
+					danjia = 0;
+				}
+				$(".xianjia-box input").val(danjia);
+				total();
+			})
+			$(".xianjia-box .add").click(function(){
+				danjia = $(".xianjia-box input").val();
+				danjia = danjia*1+1;
+				$(".xianjia-box input").val(danjia);
+				total();
+			})
+			var kyCoin = $(".ky b").text();
+			$("input[type='range']").attr("max",kyCoin);
+			
+//			买入接口	
+			$(".buy-big-btn").click(function(){
+				danjia = $(".xianjia-box input").val();
+				shuliang = $(".xianjia-box2 input").val();
+				$.ajax({
+					type:"POST",
+					url:"http://121.42.179.107:8088/router?router=buy",
+					data:{pair:pair,amount:shuliang,price:danjia,session:"ede77c62bf34248c989f53f4759cb268679575c6a222f509da110d522ae7c442"},
+					async:true,
+					dataType:'json',
+					success:function(data){
+						alert("买入接口调用成功");
+						console.log(data);
+					}
+				});
+			})
+			
+//			卖出接口
+			$(".sell-big-btn").click(function(){
+				danjia = $(".xianjia-box input").val();
+				shuliang = $(".xianjia-box2 input").val();
+				$.ajax({
+					type:"POST",
+					url:"http://121.42.179.107:8088/router?router=sell",
+					data:{pair:pair,amount:shuliang,price:danjia,session:"ede77c62bf34248c989f53f4759cb268679575c6a222f509da110d522ae7c442"},
+					async:true,
+					dataType:'json',
+					success:function(data){
+						alert("卖出接口调用成功");
+						console.log(data);
+					}
+				});
+			})
+		</script>
+		
+		<!--K线图-->
+		<script type="text/javascript">
+			var allArr = [];
+			var data0 = "";
+			getJson();
+			time = setInterval("getJson()",10000);
+			function getJson() {
+
+				$.ajax({
+					type:"GET",
+					url:"http://121.42.179.107:8088/router?router=get_coin_k_line&pair="+pair+"&interval=",
+					async:true,
+					dataType:'json',
+					success:function(data){
+						allArr = [];
+						var arr = [];
+						$.each(data.data, function(index,content) {
+							var open = parseFloat(content.open);
+							var close = parseFloat(content.close);
+							var min = parseFloat(content.min);
+							var max = parseFloat(content.max);
+							var amount = parseFloat(content.amount);
+							var time = content.timetick;
+							time = getMyDate2(time);
+							var arr = [time,open,close,min,max];
+							allArr.push(arr);
+						});
+						data0 = splitData(allArr);
+						myChart.setOption({   
+							xAxis: {
+								data: data0.categoryData
+							},
+			                series:[
+			                    {    
+			                        data:data0.values,
+			                        markPoint: {
+						                label: {
+						                    normal: {
+						                    	color : "red"
+						                    }
+						                },
+						                data: [
+						                    {
+						                        name: 'highest value',
+						                        type: 'max',
+						                        valueDim: 'highest',
+						                        symbol: 'circle',
+						                        symbolSize: [1,1],
+						                    },
+						                    {
+						                        name: 'lowest value',
+						                        type: 'min',
+						                        valueDim: 'lowest',
+						                        symbol: 'circle',
+						                        symbolSize: [1,1],
+						                    },
+						                ],
+						            },
+			                    },
+			                    {
+						            data: calculateMA(5),
+						        },
+						        {
+						            data: calculateMA(10),
+						        },
+						        {
+						            data: calculateMA(20),
+						        },
+						        {
+						            data: calculateMA(30),
+						      	},
+			                ]
+			            })
+						myChart.hideLoading();
+				}
+				});
+			
+			}
+			
+				
+			var dom = document.getElementById("trade-K");
+			var myChart = echarts.init(dom);
+			var app = {};
+			option = null;
+			var upColor = '#ec0000';
+			var upBorderColor = '#8A0000';
+			var downColor = '#00da3c';
+			var downBorderColor = '#008F28';
+			
+			function splitData(rawData) {
+			    var categoryData = [];
+			    var values = []
+			    for (var i = 0; i < rawData.length; i++) {
+			        categoryData.push(rawData[i].splice(0, 1)[0]);
+			        values.push(rawData[i])
+			    }
+			    return {
+			        categoryData: categoryData,
+			        values: values
+			    };
+			}
+			
+			function calculateMA(dayCount) {
+			    var result = [];
+			    for (var i = 0, len = data0.values.length; i < len; i++) {
+			        if (i < dayCount) {
+			            result.push('-');
+			            continue;
+			        }
+			        var sum = 0;
+			        for (var j = 0; j < dayCount; j++) {
+			            sum += data0.values[i - j][1];
+			        }
+			        result.push(sum / dayCount);
+			    }
+			    return result;
+			}
+			
+			
+			option = {
+			    tooltip: {
+			        trigger: 'axis',
+			        axisPointer: {
+			            type: 'cross'
+			        }
+			    },
+			    legend: {
+			        data: ['日K', 'MA5', 'MA10', 'MA20', 'MA30']
+			    },
+			    grid: {
+			        left: '10%',
+			        right: '10%',
+			        bottom: '15%'
+			    },
+			    xAxis: {
+			        type: 'category',
+			        data: data0.categoryData,
+			        scale: true,
+			        boundaryGap : false,
+			        axisLine: {onZero: false},
+			        splitLine: {show: false},
+			        splitNumber: 20,
+			        min: 'dataMin',
+			        max: 'dataMax'
+			    },
+			    yAxis: {
+			        scale: true,
+			        splitArea: {
+			            show: true
+			        }
+			    },
+			    dataZoom: [
+			        {
+			            type: 'inside',
+			            start: 50,
+			            end: 100
+			        },
+			        {
+			            show: true,
+			            type: 'slider',
+			            y: '90%',
+			            start: 50,
+			            end: 100
+			        }
+			    ],
+			    series: [
+			        {
+			            name: '日K',
+			            type: 'candlestick',
+			            data: data0.values,
+			            itemStyle: {
+			                normal: {
+			                    color: upColor,
+			                    color0: downColor,
+			                    borderColor: upBorderColor,
+			                    borderColor0: downBorderColor
+			                }
+			            },
+				    },
+				    {
+			            name: 'MA5',
+			            type: 'line',
+			            smooth: true,
+			            lineStyle: {
+			                normal: {opacity: 0.5}
+			            }
+			        },
+			        {
+			            name: 'MA10',
+			            type: 'line',
+			            smooth: true,
+			            lineStyle: {
+			                normal: {opacity: 0.5}
+			            }
+			        },
+			        {
+			            name: 'MA20',
+			            type: 'line',
+			            smooth: true,
+			            lineStyle: {
+			                normal: {opacity: 0.5}
+			            }
+			        },
+			        {
+			            name: 'MA30',
+			            type: 'line',
+			            smooth: true,
+			            lineStyle: {
+			                normal: {opacity: 0.5}
+			            }
+			        },
+			       
+			    ]
+			};
+			
+			;
+			if (option && typeof option === "object") {
+			    myChart.setOption(option, true);
+			    myChart.showLoading();
+			}
+			
+			
+       </script>
+		
+		<!--滑块-->
+		<script>
+		    $(function() {
+		        var $document   = $(document);
+		        var selector    = '[data-rangeslider]';
+		        var $inputRange = $(selector);
+		
+		        function valueOutput(element) {
+		            var value = element.value;
+					$(".xianjia-box2 input").val(value);
+					total();
+		        }
+		
+		        for (var i = $inputRange.length - 1; i >= 0; i--) {
+		            valueOutput($inputRange[i]);
+		        };
+		
+		        $document.on('input', selector, function(e) {
+		            valueOutput(e.target);
+		        });
+		
+		        $inputRange.rangeslider({
+		            polyfill: false
+		        });
+		
+		        $document.on('click', '#js-example-change-value button', function(e) {
+		            var $inputRange = $('input[type="range"]', e.target.parentNode);
+		            var value = $('input[type="number"]', e.target.parentNode)[0].value;
+		
+		            $inputRange
+		                .val(value)
+		                .change();
+		        });
+		
+		        $document.on('click', '#js-example-change-attributes button', function(e) {
+		            var $inputRange = $('input[type="range"]', e.target.parentNode);
+		            var attributes = {
+		                min: $('input[name="min"]', e.target.parentNode)[0].value,
+		                max: $('input[name="max"]', e.target.parentNode)[0].value,
+		                step: $('input[name="step"]', e.target.parentNode)[0].value
+		            };
+		
+		            $inputRange
+		                .attr(attributes)
+		                .rangeslider('update', true);
+		        });
+		
+		        $document
+		            .on('click', '#js-example-destroy button[data-behaviour="destroy"]', function(e) {
+		                $('input[type="range"]', e.target.parentNode).rangeslider('destroy');
+		            })
+		            .on('click', '#js-example-destroy button[data-behaviour="initialize"]', function(e) {
+		                $('input[type="range"]', e.target.parentNode).rangeslider({ polyfill: false });
+		            });
+		    });
+		
+		</script>
+	</body>
+</html>

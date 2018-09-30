@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>个人中心</title>
+		<link rel="stylesheet" type="text/css" href="css/reset.css"/>
+		<link rel="stylesheet" type="text/css" href="css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css"/>
+		<style type="text/css">
+		.container {background: #EEEEEE;min-height: 800px;}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header">
+				<div class="logo fl">
+					<img class="logo1" src="img/logo1.png"/>
+					<img class="logo2" src="img/logo2.png"/>
+				</div>
+				<div class="nav fl">
+					<a href="index.html">行情</a>
+					<a href="trade.html">交易</a>
+				</div>
+				<div class="layui-input-inline fl">
+					<input type="text" name="search" placeholder="想要了解的币？" class="layui-input">
+					<div class="search">
+						<img src="img/search.png"/>
+					</div>
+				</div>
+				<div class="user-center fr">
+					<a href="#">登录</a><span>|</span><a href="#">注册</a>
+				</div>
+			</div>
+			<div class="user-center-warp">
+				<div class="tab clearfix">
+					<div class="on">我的资产</div>
+					<div>提币地址</div>
+					<div>个人资料</div>
+				</div>
+				
+				<div class="user-info">
+					
+					<!--我的资产-->
+					<div style="display: block;">
+						<div class="trade-account clearfix">
+							<h2>交易账户</h2>
+							<h3>总资产折合(BTC)</h3>
+							<h1 class="fl">2.443526</h1>
+							<div class="hr"></div>
+						</div>
+						<ul class="trade-account-list">
+							<li>
+								<span class="trade-account-name">NAME/USDT</span>
+								<span class="keyong">可用</span>
+								<span class="trade-account-num">10000</span>
+							</li>
+							<li>
+								<span class="trade-account-name">NAME/USDT</span>
+								<span class="keyong">可用</span>
+								<span class="trade-account-num">10000</span>
+							</li>
+							<li>
+								<span class="trade-account-name">NAME/USDT</span>
+								<span class="keyong">可用</span>
+								<span class="trade-account-num">10000</span>
+							</li>
+							<li>
+								<span class="trade-account-name">NAME/USDT</span>
+								<span class="keyong">可用</span>
+								<span class="trade-account-num">10000</span>
+							</li>
+						</ul>
+					</div>
+					<!--我的资产-->
+
+
+					<!--提币地址-->
+					<div class="address">
+						
+						<!--地址列表-->
+						<ul>
+							<li class="address-BTC">
+								<span class="address-name">BTC</span>
+								<span class="address-edit">添加地址</span>
+								<span class="address-detail"></span>
+							</li>
+							<li class="address-ETH">
+								<span class="address-name">ETH</span>
+								<span class="address-edit">添加地址</span>
+								<span class="address-detail"></span>
+							</li>
+							<li class="address-USDT">
+								<span class="address-name">USDT</span>
+								<span class="address-edit">添加地址</span>
+								<span class="address-detail"></span>
+							</li>
+						</ul>
+						<!--地址列表-->
+						
+						<!--添加/修改地址-->
+						<div class="edit-address" style="display: none;">
+							<h2></h2>
+							<p></p>
+							<h3>地址</h3>
+							<input type="text" name="" id="" value="" placeholder="输入或粘贴地址"/>
+							<div class="confrim-edit-btn">确定</div>
+						</div>
+						<!--添加/修改地址-->
+						
+					</div>
+					<!--提币地址-->
+					
+					
+					<!--个人资料-->
+					<div>
+						<ul class="my-info">
+							<li>
+								<h5>用户ID</h5>
+								<p>42312457</p>
+							</li>
+							<li>
+								<h5>用户名</h5>
+								<p>OHPUNP LEUNG</p>
+							</li>
+							<li>
+								<h5>国家/地区</h5>
+								<p>中国</p>
+							</li>
+							<li>
+								<h5>身份证/护照号</h5>
+								<p>4417029908765123</p>
+							</li>
+						</ul>
+					</div>
+					<!--个人资料-->
+					
+				</div>
+			</div>
+			<div class="footer">全球首个区块链交易所平台</div>
+		</div>
+		
+		<script src="js/jquery-2.2.2.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(function(){
+				$(".tab > div").click(function(){
+					$(this).addClass('on').siblings().removeClass('on');
+					var ind = $(this).index();
+					$(".user-info > div").eq(ind).show().siblings().hide();
+				})
+				
+				$.ajax({
+					type:"POST",
+					url:"http://121.42.179.107:8088/router?router=get_withdraw_address",
+					data:{coin:"BTC",session:"ede77c62bf34248c989f53f4759cb268679575c6a222f509da110d522ae7c442"},
+					async:true,
+					dataType:'json',
+					success:function(data){
+						if(data.data == ""){
+							$(".address-BTC .address-edit").text("添加地址")				
+						}else{
+							$(".address-BTC .address-edit").text("修改地址");
+							$(".address-BTC .address-detail").text(data.data)
+						}
+						console.log(data);
+					}
+				});
+				
+				$.ajax({
+					type:"POST",
+					url:"http://121.42.179.107:8088/router?router=get_withdraw_address",
+					data:{coin:"ETH",session:"ede77c62bf34248c989f53f4759cb268679575c6a222f509da110d522ae7c442"},
+					async:true,
+					dataType:'json',
+					success:function(data){
+						if(data.data == ""){
+							$(".address-ETH .address-edit").text("添加地址")				
+						}else{
+							$(".address-ETH .address-edit").text("修改地址");
+							$(".address-ETH .address-detail").text(data.data)
+						}
+						console.log(data);
+					}
+				});
+				
+				$.ajax({
+					type:"POST",
+					url:"http://121.42.179.107:8088/router?router=get_withdraw_address",
+					data:{coin:"USDT",session:"ede77c62bf34248c989f53f4759cb268679575c6a222f509da110d522ae7c442"},
+					async:true,
+					dataType:'json',
+					success:function(data){
+						if(data.data == ""){
+							$(".address-USDT .address-edit").text("添加地址")				
+						}else{
+							$(".address-USDT .address-edit").text("修改地址");
+							$(".address-USDT .address-detail").text(data.data)
+						}
+						console.log(data);
+					}
+				});
+				
+				$(".address-edit").click(function(){
+					var editTitle = $(this).text();
+					var coinName = $(this).prev().text();
+					var coinAddress = $(this).next().text();
+					console.log(coinName);
+					$(".address ul").hide();
+					$(".edit-address").show();
+					$(".edit-address h2").text(editTitle);
+					$(".edit-address p").text(coinName);
+					$(".edit-address input").val(coinAddress);
+					
+				})
+				
+				
+				$(".confrim-edit-btn").click(function(){
+					var coin = $(".edit-address p").text();
+					var address = $(".edit-address input").val();
+					console.log(coin);
+					console.log(address);
+					
+					$.ajax({
+						type:"POST",
+						url:"http://121.42.179.107:8088/router?router=set_withdraw_address",
+						data:{coin:coin,address:address,session:"ede77c62bf34248c989f53f4759cb268679575c6a222f509da110d522ae7c442"},
+						async:true,
+						dataType:'json',
+						success:function(data){
+							console.log(data);
+							if(data.status == true){
+								alert("设置成功");
+								$(".edit-address").hide();
+								$(".address ul").show();
+								$(".address-"+coin+" .address-detail").text(address);
+								if(address == ""){
+									$(".address-"+coin+" .address-edit").text("添加地址");
+								}else{
+									$(".address-"+coin+" .address-edit").text("修改地址");
+								}
+							}else {
+								alert("设置失败");
+							}
+						},
+						error: function(e){
+							console.log(e);
+						}
+					});
+					
+				})
+				
+				
+			})
+		</script>
+	</body>
+</html>

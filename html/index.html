@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>首页</title>
+		<link rel="stylesheet" type="text/css" href="css/reset.css"/>
+		<link rel="stylesheet" type="text/css" href="css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css"/>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header">
+				<div class="logo fl">
+					<img class="logo1" src="img/logo1.png"/>
+					<img class="logo2" src="img/logo2.png"/>
+				</div>
+				<div class="nav fl">
+					<a href="index.html" class="on">行情</a>
+					<a href="trade.html">交易</a>
+				</div>
+				<div class="layui-input-inline fl">
+					<input type="text" name="search" placeholder="想要了解的币？" class="layui-input">
+					<div class="search">
+						<img src="img/search.png"/>
+					</div>
+				</div>
+				<div class="user-center fr">
+					<a href="login.html">登录</a><span>|</span><a href="register.html">注册</a>
+				</div>
+			</div>
+			<div class="banner">
+				<div class="layui-carousel" id="banner">
+				  <div carousel-item>
+				    <div><img src="img/banner/banner3.jpg"/></div>
+				    <div><img src="img/banner/banner3.jpg"/></div>
+				    <div><img src="img/banner/banner3.jpg"/></div>
+				  </div>
+				</div>
+			</div>
+			<div class="main">
+				<ul></ul>
+			</div>
+			<div class="footer">全球首个区块链交易所平台</div>
+		</div>
+		
+		<script src="js/jquery-2.2.2.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/echarts.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			//轮播图设置
+			layui.use('carousel', function(){
+			  var carousel = layui.carousel;
+			  carousel.render({
+			    elem: '#banner'
+			    ,width: '100%'
+			    ,height: '300px'
+			  });
+			});
+		</script>
+		<script type="text/javascript">
+			
+			$(function(){
+				
+				var html = "";
+				
+				//获取排行榜
+				$.ajax({
+					type:"get",
+					url:"http://121.42.179.107:8088/router?router=get_rank",
+					async:true,
+					dataType:'json',
+					success:function(data){
+						var increaseNum = 0;
+						var increaseDiv = "";
+						$.each(data.data, function(index,content) {
+							increaseNum = (content.increase*100).toFixed(1);
+							if(increaseNum >= 0){
+								increaseDiv = "<div class='change'>+"+increaseNum+"%</div>";
+							}else{
+								increaseDiv = "<div class='change-down'>"+increaseNum+"%</div>";
+							}
+							html += `<li class="item clearfix">
+								<a href="trade.html?pair=${content.name}" target="_blank">
+								<div class="num">${index+1}</div>
+								<div class="name">${content.name}</div>
+								<div class="price">
+									<div class="last-trade">$${(content.price).substring(0, 10)}</div>
+									<div class="volume">24H量${(content.amount).substring(0, 17)}</div>
+								</div>
+								${increaseDiv}
+								<div class="line-chart" id=${index}><br/><br/><br/><br/>${getLine(index,content.name)}</div>
+								</a>
+							</li>`
+							
+						});
+						$(".main ul").append(html);
+
+						$(".item:odd").css({'background':'#dcdcdc'});
+						
+						
+					}
+				});
+				
+				//获取简单K线
+				function getLine(id,name){
+					var charts = [];
+					$.ajax({
+						type:"get",
+						url:"http://121.42.179.107:8088/router?router=get_simple_k_line&pair="+name,
+						async:true,
+						dataType:'json',
+						success:function(data){
+							var simpleArr = [];
+							$.each(data.data, function(index,content) {
+								simpleArr.push(parseFloat(content));
+							});
+							var line1 = document.getElementById(id);
+							var myChart = echarts.init(line1);
+					        
+					        myChart.setOption({
+					        	tooltip: {},
+					            grid:{
+				                    x:-2,
+				                    x2:-2,
+				                },
+					            xAxis: {
+					            	show: false,
+							        type: 'category',
+							        data:simpleArr
+							    },
+					            yAxis: {show: false,
+					            min:'dataMin',
+	                        	max:'dataMax',
+					            splitNumber: 1,
+					            },
+					            series: [{
+					            	data: simpleArr,
+					            	showSymbol: false,
+					                type: 'line'
+					            }]
+					        });
+					            
+					        charts.push(myChart);
+						}
+					});
+					
+				}
+				
+			})
+		</script>
+		
+	</body>
+</html>

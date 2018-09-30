@@ -1,0 +1,79 @@
+body, div,
+h1, h2, h3, h4, h5, h6,
+p, blockquote, pre, dl, dt, dd, ol, ul, li, hr,
+fieldset, form, label, legend, th, td,
+article, aside, figure, footer, header, hgroup, menu, nav, section,
+summary, hgroup {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+a {
+	color: #000000;
+	text-decoration: none;
+}
+a:active,
+a:hover,
+a:visited,
+a:link {
+  outline: 0;
+  text-decoration: none;
+	color: #000000;
+}
+
+li {
+	list-style: none;
+}
+
+html {
+	font-size: 62.5%;
+	font-family:"微软雅黑" !important;
+}
+
+body {
+	font-family:"微软雅黑" !important;
+	overflow-x: hidden;
+}
+
+@-webkit-viewport { width: device-width; }
+@-moz-viewport { width: device-width; }
+@-ms-viewport { width: device-width; }
+@-o-viewport { width: device-width; }
+@viewport { width: device-width; }
+
+/*垂直居中(本身)*/
+.center-vertical {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+/*垂直居中(内容)*/
+.center-vertical-wrap{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/*全浏览器通用的clearfix方案【推荐】
+引入了zoom以支持IE6/7
+同时加入:before以解决现代浏览器上边距折叠的问题*/
+.clearfix:before,
+.clearfix:after {
+    display: table;
+    content: " ";
+}
+.clearfix:after {
+    clear: both;
+}
+.clearfix{
+    *zoom: 1;
+}
+
+
+.fl {
+	float: left;
+}
+.fr {
+	float: right;
+}

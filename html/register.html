@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>注册</title>
+		<link rel="stylesheet" type="text/css" href="css/reset.css"/>
+		<link rel="stylesheet" type="text/css" href="css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css"/>
+		<style type="text/css">
+		.container {background: #EEEEEE;min-height: 800px;}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header">
+				<div class="logo fl">
+					<img class="logo1" src="img/logo1.png"/>
+					<img class="logo2" src="img/logo2.png"/>
+				</div>
+				<div class="nav fl">
+					<a href="index.html">行情</a>
+					<a href="trade.html">交易</a>
+				</div>
+				<div class="layui-input-inline fl">
+					<input type="text" name="search" placeholder="想要了解的币？" class="layui-input">
+					<div class="search">
+						<img src="img/search.png"/>
+					</div>
+				</div>
+				<div class="user-center fr">
+					<a href="login.html">登录</a><span>|</span><a href="register.html">注册</a>
+				</div>
+			</div>
+			<div class="login">
+				<div class="login-logo">
+					<img src="img/logo1.png"/>
+				</div>
+				<div class="login-name">BitLeague</div>
+				<form class="login-form">
+					<input type="text" name="username" id="" value="" placeholder="请输入手机号或邮箱" required="required"/><br />
+					<input type="password" name="password" id="" value="" placeholder="请输入密码" required="required"/>
+					<input type="text" name="code" id="guest_code" value="" placeholder="请输入验证码"/>
+					<div class="get-code fr">验证码</div>
+					<div class="clearfix"></div>
+					<input class="reg-btn" type="button" value="注 册" id="reg-btn"  onclick="submit()"/>
+				</form>
+				<div class="no-identity">
+					已有账号？<a href="login.html">登录</a>
+				</div>
+			</div>
+		</div>
+		
+		<script src="js/jquery-2.2.2.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		
+		
+		<script type="text/javascript">
+			$(function(){
+				
+				$(".get-code").click(function(){
+					var name = $("input[name='username']").val();
+					
+					//获取验证码
+					$.ajax({
+						type:"post",
+						url:"http://121.42.179.107:8088/router?router=make_valid_code",
+						async:true,
+						data:{user:name},
+						dataType:'json',
+						success:function(data){
+							console.log(data);
+						}
+					});
+					
+				})
+				
+				
+				$("input[type='button']").click(function(){
+					var name = $("input[name='username']").val();
+					var pass = $("input[name='password']").val();
+					var code = $("input[name='code']").val();
+					
+					if(name !== "" && pass !== "" && code != ""){
+					
+						$.ajax({
+							type:"post",
+							url:"http://121.42.179.107:8088/router?router=check_exist_name",
+							async:true,
+							data:{user:name},
+							dataType:'json',
+							success:function(data){
+								if(data.status == true){
+									layui.use('layer', function(){
+									  var layer = layui.layer;
+									  layer.msg('用户名已存在');
+									});      
+								}else{
+									$.ajax({
+										type:"post",
+										url:"http://121.42.179.107:8088/router?router=regeist_user",
+										data:{user:name,pass:pass,valid_code:code},
+										async:true,
+										dataType:'json',
+										success:function(data){
+											console.log(data);
+											if(data.status == true){
+												alert("注册成功");
+											}else{
+												alert("注册失败");
+											}
+										}
+									});
+								}
+							}
+						});
+					
+					}else{
+						layui.use('layer', function(){
+						  var layer = layui.layer;
+						  layer.msg('请将账号、密码、验证码填写完整');
+						});   
+					}
+					
+				})
+				
+			})
+			
+		</script>
+	</body>
+</html>
